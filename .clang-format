@@ -1,0 +1,8 @@
+﻿BasedOnStyle: Mozilla
+ContinuationIndentWidth: 4
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+IndentWidth: 4
+SortIncludes: true
+TabWidth: 4
+UseTab: Never
