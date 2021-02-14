@@ -1,28 +1,35 @@
+#include "fft.h"
 #include "sampler.h"
+
+#include <math.h>
+
+RealFFT fft = RealFFT(SAMPLER_BUFFER_SIZE);
 
 void
 setup()
 {
     Sampler.start();
 
-    Serial.begin(9600);
+    Serial.begin(19200);
 }
 
 void
 loop()
 {
     if (Sampler.ready()) {
-        for (int i = 0; i < SAMPLER_BUFFER_SIZE; i++) {
-            Serial.print(Sampler.samples[i].c1);
-            Serial.print(" ");
-            Serial.print(Sampler.samples[i].c2);
-            Serial.print(" ");
-            Serial.println(Sampler.samples[i].c3);
-        }
+        fft.execute(Sampler.samples.c1);
+        fft.execute(Sampler.samples.c2);
+        fft.execute(Sampler.samples.c3);
 
-        for (int i = 0; i < 32; i++) {
-            Serial.println("500 500 0");
+        double c1 = atan2(Sampler.samples.c1[90], Sampler.samples.c1[39]);
+        double c2 = atan2(Sampler.samples.c2[90], Sampler.samples.c2[39]);
+        double c3 = atan2(Sampler.samples.c3[90], Sampler.samples.c3[39]);
+        double phi = 360.0 + 36.0 + (180.0 * (c2 - c1) / M_PI);
+
+        while (phi > 360.0) {
+            phi -= 360.0;
         }
+        Serial.println(phi);
 
         Serial.flush();
         Sampler.start();

@@ -14,7 +14,7 @@ ISR(ADC_vect)
     Sampler.sample(ADC);
 }
 
-volatile frame InterruptSampler::samples[SAMPLER_BUFFER_SIZE];
+volatile channels InterruptSampler::samples;
 volatile int InterruptSampler::cursor = 0;
 volatile uint8_t InterruptSampler::channel = 0;
 volatile bool InterruptSampler::done = false;
@@ -26,15 +26,15 @@ InterruptSampler::sample(int adc)
     if (cursor != SAMPLER_BUFFER_SIZE) {
         switch (channel) {
             case 0:
-                samples[cursor].c1 = adc;
+                samples.c1[cursor] = (double)adc;
                 channel = 1;
                 break;
             case 1:
-                samples[cursor].c2 = adc;
+                samples.c2[cursor] = (double)adc;
                 channel = 2;
                 break;
             case 2:
-                samples[cursor].c3 = adc;
+                samples.c3[cursor] = (double)adc;
                 channel = 0;
                 cursor += 1;
                 break;

@@ -8,10 +8,10 @@
 
 typedef struct
 {
-    int c1;
-    int c2;
-    int c3;
-} frame;
+    double c1[SAMPLER_BUFFER_SIZE];
+    double c2[SAMPLER_BUFFER_SIZE];
+    double c3[SAMPLER_BUFFER_SIZE];
+} channels;
 
 extern "C" void
 TIMER1_OVF_vect(void) __attribute__((signal));
@@ -29,7 +29,7 @@ class InterruptSampler
     static void initialize();
 
   public:
-    static volatile frame samples[SAMPLER_BUFFER_SIZE];
+    static volatile channels samples;
 
     static void start();
     static void stop();
