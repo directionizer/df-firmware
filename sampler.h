@@ -33,7 +33,7 @@ class InterruptSampler
 
     static void start();
     static void stop();
-    static bool ready();
+    static bool working();
 
     friend void ADC_vect(void);
 };

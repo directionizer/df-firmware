@@ -22,7 +22,7 @@ volatile bool InterruptSampler::done = false;
 inline void
 InterruptSampler::sample(int adc)
 {
-    // Collect ADC into samples with round-robin
+    // Collect ADC into samples, round-robin
     if (cursor != SAMPLER_BUFFER_SIZE) {
         switch (channel) {
             case 0:
@@ -41,7 +41,7 @@ InterruptSampler::sample(int adc)
         }
 
         // Set ADC to next channel
-        ADMUX = bit(REFS0) | channel;
+        ADMUX = channel;
     } else {
         stop();
         done = true;
@@ -54,7 +54,7 @@ InterruptSampler::initialize()
     // Configure the ADC (prescaler = 64)
     ADCSRA = bit(ADEN) | bit(ADPS1) | bit(ADPS2);
     ADCSRB = bit(ADTS1) | bit(ADTS2);
-    ADMUX = bit(REFS0) | 0;
+    ADMUX = 0;
 
     // Initialize ADC
     ADCSRA |= bit(ADSC);
@@ -83,12 +83,13 @@ InterruptSampler::start()
 inline void
 InterruptSampler::stop()
 {
+    // Disable Timer 1 and ADC
     TCCR1B = bit(WGM12) | bit(WGM13);
     ADCSRA = 0;
 }
 
 bool
-InterruptSampler::ready()
+InterruptSampler::working()
 {
-    return done;
+    return !done;
 }
