@@ -1,6 +1,21 @@
+/*
+ * Copyright (C) 2021  Mason Ahner, Jared Beller, and John Fiorini
+ * This file is part of df-firmware.
+ *
+ * df-firmware is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * df-firmware is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 #include "sampler.h"
-
-#include "Arduino.h"
 
 #include <avr/interrupt.h>
 
@@ -52,23 +67,23 @@ void
 InterruptSampler::initialize()
 {
     // Configure the ADC (prescaler = 64)
-    ADCSRA = bit(ADEN) | bit(ADPS1) | bit(ADPS2);
-    ADCSRB = bit(ADTS1) | bit(ADTS2);
+    ADCSRA = _BV(ADEN) | _BV(ADPS1) | _BV(ADPS2);
+    ADCSRB = _BV(ADTS1) | _BV(ADTS2);
     ADMUX = 0;
 
     // Initialize ADC
-    ADCSRA |= bit(ADSC);
-    while (!(ADCSRA & bit(ADIF)))
+    ADCSRA |= _BV(ADSC);
+    while (!(ADCSRA & _BV(ADIF)))
         ;
 
     // Overflow Timer 1 every 100 us (10 kHz)
-    TCCR1A = bit(WGM11);
-    TCCR1B = bit(WGM12) | bit(WGM13) | bit(CS11);
-    TIMSK1 = bit(TOIE1);
+    TCCR1A = _BV(WGM11);
+    TCCR1B = _BV(WGM12) | _BV(WGM13) | _BV(CS11);
+    TIMSK1 = _BV(TOIE1);
     ICR1 = 200 - 1;
 
     // Trigger ADC on Timer 1 overflow
-    ADCSRA |= bit(ADATE) | bit(ADIE) | bit(ADIF);
+    ADCSRA |= _BV(ADATE) | _BV(ADIE) | _BV(ADIF);
 }
 
 void
@@ -84,7 +99,7 @@ inline void
 InterruptSampler::stop()
 {
     // Disable Timer 1 and ADC
-    TCCR1B = bit(WGM12) | bit(WGM13);
+    TCCR1B = _BV(WGM12) | _BV(WGM13);
     ADCSRA = 0;
 }
 
